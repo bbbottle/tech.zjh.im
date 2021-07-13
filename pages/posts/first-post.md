@@ -2,7 +2,7 @@
 title: test
 date: 2020/6/7
 author: zjhou
-description: A test post.
+description: A test post (#1 test ci).
 type: post
 ---
 
