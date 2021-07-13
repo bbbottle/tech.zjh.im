@@ -8,11 +8,10 @@ type: post
 ---
 
 # tech.zjh.im 持续部署
-
-该过程本质上是利用 [ssh-action](https://github.com/appleboy/ssh-action)，远程连到 VPS 并执行相应的命令。
+tech.zjh.im 是用 nextra 生成的静态网站，主要内容由 mdx 文件构成。为了专注、高效地更新站点内容，构建部署这种重复性的动作应该交给 CD 完成。利用现成的 ssh-action, 实现简单，远程连到 VPS 并执行相应的命令即可；配置成本低，长远来看收益不小。
 
 ### VPS 前提：
-1. [新增 SSH 密钥到 Github 账户](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+1. 新增 SSH 密钥到 Github 账户
 2. 拉取 tech.zjh.im 仓库，并安装好依赖
 3. Nginx 已经配置好静态文件服务
 4. tech.zjh.im 仓库内容更新后，只要重新构建更新 dist 目录，站点便更新
@@ -34,4 +33,6 @@ type: post
 
 
 ___
-<cite><a href="https://github.com/appleboy/ssh-action">How to setup continuous deployment of a website on a VPS using GitHub Actions</a></cite>
+<cite><a href="https://github.com/appleboy/ssh-action">How to setup continuous deployment of a website on a VPS using GitHub Actions</a></cite><br />
+<cite>[ssh-action](https://github.com/appleboy/ssh-action)</cite><br />
+<cite>[新增 SSH 密钥到 Github 账户](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)</cite>
