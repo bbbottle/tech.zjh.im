@@ -35,4 +35,5 @@ tech.zjh.im 是用 nextra 生成的静态网站，主要内容由 mdx 文件构�
 ___
 <cite><a href="https://github.com/appleboy/ssh-action">How to setup continuous deployment of a website on a VPS using GitHub Actions</a></cite><br />
 <cite>[ssh-action](https://github.com/appleboy/ssh-action)</cite><br />
-<cite>[新增 SSH 密钥到 Github 账户](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)</cite>
+<cite>[新增 SSH 密钥到 Github 账户](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)</cite><br />
+<cite>[nextra](https://nextra.vercel.app/)</cite>
