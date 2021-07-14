@@ -14,11 +14,10 @@ import FooterNotes from 'components/FooterNotes';
 # tech.zjh.im 持续部署
 tech.zjh.im 是用 <SupRef name="nextra" order={1}>nextra</SupRef> 生成的静态网站，主要内容由 mdx 文件构成。为了专注、高效地更新站点内容，构建部署这种重复性的动作应该交给 CD 完成。利用现成的 <SupRef order={2} name="ssh_action">ssh-action</SupRef>, 实现简单，远程连到 VPS 并执行相应的命令即可；配置成本低，长远来看收益不小。
 
-### VPS 前提：
+### VPS 准备：
 1. 新增 SSH 密钥到 <SupRef order={3} name="github_ssh">GitHub</SupRef> 账户
 2. 拉取 tech.zjh.im 仓库，并安装好依赖
-3. Nginx 已经配置好静态文件服务
-4. tech.zjh.im 仓库内容更新后，只要重新构建更新 dist 目录，站点便更新
+3. Nginx 已经配置好静态文件服务，tech.zjh.im 仓库内容更新后，只要重新构建更新 dist 目录，站点便更新
 
 ### VPS 配置步骤
 1. `cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys`
