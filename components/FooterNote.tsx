@@ -6,7 +6,7 @@ type FooterNote = {
     children: string
 }
 
-export default (props: FooterNote) => {
+const FooterNote = (props: FooterNote) => {
     const {
         name,
         href,
@@ -26,3 +26,5 @@ export default (props: FooterNote) => {
         </>
     )
 }
+
+export default FooterNote;

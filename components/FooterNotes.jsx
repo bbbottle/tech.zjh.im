@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default (props) => {
+const FooterNotes = (props) => {
   return (
     <>
       <hr />
@@ -8,3 +8,5 @@ export default (props) => {
     </>
   )
 }
+
+export default FooterNotes;

@@ -6,7 +6,7 @@ type Ref = {
     children: string,
 }
 
-export default (props: Ref) => {
+const SupRef = (props: Ref) => {
     const {
         name,
         children,
@@ -28,3 +28,5 @@ export default (props: Ref) => {
         </>
     )
 }
+
+export default SupRef;
