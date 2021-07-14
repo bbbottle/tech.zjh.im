@@ -2,3 +2,7 @@ html ::-webkit-scrollbar {
   display: none;
   width: 0;
 }
+
+.prose .references {
+  text-decoration: none;
+}
