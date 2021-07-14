@@ -17,6 +17,7 @@ export default (props: Ref) => {
         <>
             <sup>
                 <a
+                    className="references"
                     href={`#${name}_note`}
                     id={`${name}_ref`}
                 >
