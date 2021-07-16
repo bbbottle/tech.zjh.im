@@ -6,3 +6,7 @@ html ::-webkit-scrollbar {
 .prose .references {
   text-decoration: none;
 }
+
+.prism-code {
+  color: #d8d8d8 !important
+}
