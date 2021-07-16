@@ -1,0 +1,86 @@
+---
+title: nginx 文档阅读笔记
+date: 2021/07/16
+author: zjh
+description: 从零学习 nginx 过程中的笔记。
+tag: Nginx
+type: post
+---
+import SupRef from 'components/SupRef';
+import FooterNote from 'components/FooterNote';
+import FooterNotes from 'components/FooterNotes';
+
+本文所有信息均来自<SupRef order={1} name="nginx_doc">官方文档</SupRef>以及其他博文，阅读过程中摘录了自认为是要点的信息。
+
+### 基本信息
+- Nginx 有一个主进程和一些工作进程。
+  - 主进程的目的是读取并解析配置同时维护工作进程。
+  - 工作进程做实际的请求处理。
+- Nginx 采用基于事件的模型与 OS 依赖机制来高效地在工作进程间分发请求
+- Nginx 与其模块的工作方式通过配置文件确定
+- 默认情况下，配置的名字是 nginx.conf 位于目录 /usr/local/nginx/conf, /etc/nginx, 或者 /usr/local/etc/nginx 下
+
+### 启停与配置重载
+直接运行可执行文件来启动 nginx, 一经启动，便能通过 `nginx -s signal` 来控制。signal 取值：
+- stop - 快速关闭
+- quit - 优雅停服
+- reload - 重新载入配置文件
+- reopen - 重新打开日志文件
+
+其中 `nginx -s quit` 优雅之处在于它会等待所有工作进程处理完手头上的请求再停止 nginx 进程。另一种优雅停服的方式可以借助工具 `kill` 完成。假设 Nginx 主进程 ID 为 1628, 那么我们也能使用 `kill -s QUIT 1628` 实现 `nginx -s quite` 一样的效果。
+
+命令 `ps -ax | grep nginx` 可列出所有正在运行的 nginx 进程。
+
+### 配置文件结构
+nginx 由各种**模块**构成。这些模块由配置文件中的各**指令**控制。
+
+#### 指令
+- 简单指令，一条简单指令由名称和空格分割的参数构成，并且以分号结束。
+- 块级指令，块级指令和简单指令有着相同的结构，只是它不以分号结尾，而是由花括号和包裹其间的附加指令集结束
+
+#### 上下文
+- 如果一个块级指令能够在花括号中包含其他指令，那么它就被称为一个**上下文**（例如: events, http, server 和 location）
+- 如果一个配置文件中的指令不在任何一个上下文中，则被视为处于 main 上下文中
+
+
+---
+### 内容缓存指南
+对<SupRef order={2} name="nginx_cache_guide">内容进行缓存</SupRef>可以加速内容到客户端的分发并减轻服务器负载。站点或应用的性能是成功的关键因素。缓存内容处于客户端和原始服务器之间，并且保存了它所见全部内容的拷贝。一旦客户端请求已经缓存过的内容，将不再联系原始服务器而是直接返回缓存内容。在浏览器和应用服务器之间有多份潜在缓存：浏览器客户端缓存、中间缓存(公司网络、服务提供商等等)、CDN 和负载均衡器或反向代理。即使是反向代理或负载均衡器层的缓存，也能极大地提升性能。
+
+只需要两条指令，就能启用 nginx 基础缓存能力：`proxy_cache_path` 和 `proxy_cache`。前者可以设置缓存配置和缓存的路径。后者用来激活它。 `proxy_cache_path` 指令需要在 http {} 上下文的顶部添加。
+
+```nginx
+proxy_cache_path /path/to/cache levels=1:2 keys_zone=my_cache:10m max_size=10g 
+                 inactive=60m use_temp_path=off;
+
+server {
+    # ...
+    location / {
+        proxy_cache my_cache;
+        proxy_pass http://my_upstream;
+    }
+}
+
+```
+
+`proxy_cache_path` 指令配置说明如下：
+- `/path/to/cache` 指定缓存的本地磁盘目录。
+- `levels` 在 `/path/to/cache` 下设置了双层目录目录结构。大量文件位于单层目录下将影响文件访问速度，因此推荐为大多数部署使用双层目录结构。如果 `levels` 留空，nginx 将把所有文件放在同级目录下。
+- `keys_zone` 设置了一个共享内存区来存储缓存的 key 以及缓存元信息，例如使用计时器。在内存里维护一份 keys 的拷贝可以使得 nginx 快速确定请求是否命中缓存。1 M 的区域大概能存储 8000 个键。
+- `max_size` 设置缓存大小的上限，上边的示例是 10G。是个可选参数，如果不设置缓存将持续增长直到用尽磁盘空间。当缓存到达上限后，缓存管理器进程将采用 <SupRef order={3} name="LRU">LRU</SupRef> 算法移除文件，把缓存大小降至上限以下。
+- `inactive` 指定数据条目没有被访问后还能在缓存中维持多久，上述示例中文件在一个小时内没有被访问将会被缓存管理器进程直接删除，不管它是否过期。
+
+### Web 服务器与反向代理
+### 负载均衡
+#### 七层请求路由
+#### 持久会话
+...
+### 安全性控制
+### 编程能力
+#### Nginx Javscript 模块
+
+<FooterNotes>
+1. <FooterNote href="http://nginx.org/en/docs/" name="nginx_doc">Nginx 官方文档</FooterNote>
+2. <FooterNote href="https://www.nginx.com/blog/nginx-caching-guide/" name="nginx_cache_guide">A Guide to Caching with NGINX and NGINX Plus</FooterNote>
+3. <FooterNote href="https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)" name="LRU">Cache replacement policies - Least recently used</FooterNote>
+</FooterNotes>
