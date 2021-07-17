@@ -3,6 +3,11 @@ html ::-webkit-scrollbar {
   width: 0;
 }
 
+.prose pre {
+    color: #2d3748 !important;
+    background-color: #e2e8f0 !important;
+}
+
 .prose .references {
   text-decoration: none;
 }
