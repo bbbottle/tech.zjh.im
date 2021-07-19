@@ -5,7 +5,7 @@ type TableProps = {
     bodyStringMatrix: string[][],
 }
 
-const Table = (props) => {
+const Table = (props: TableProps) => {
     const {
         headsStringMatrix,
         bodyStringMatrix,

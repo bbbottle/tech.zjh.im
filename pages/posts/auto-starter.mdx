@@ -1,0 +1,114 @@
+---
+title: 开机自启增强
+date: 2021/02/18
+author: zjh
+description: 开机自启并自动分发不同窗口到不同虚拟桌面。
+type: post
+---
+# 开机自启增强
+
+import Table  from "components/Table";
+
+如果开机后，电脑仅仅是自动启动一堆软件并占据桌面，反而让人觉得工作无从下手。不如，再让电脑往前多走一步，把启动的软件窗口分发到不同虚拟桌面。
+
+
+下文所提到的脚本只在 ubuntu 系统，plasma 桌面环境下自测。主要功能基于[ xdotools ](https://github.com/jordansissel/xdotool)实现，这是一款比较古老的工具。GitHub 上[示例目录](https://github.com/jordansissel/xdotool/tree/master/examples)最近更新时间已经是十一年前。一句话（`man xdotool`）介绍：
+
+> xdotool - command-line X11 automation tool
+
+
+它可以模拟键盘输入、鼠标活动，移动窗口、调整窗口尺寸等。要实现文章开头说的效果，需要用到以下功能：
+
+1. 搜索窗口
+1. 激活窗口
+1. 按键模拟
+
+
+
+思路很简单：启动软件后，找到想要移动的窗口，激活并使用快捷键将其送到指定的虚拟桌面。了解命令用法前，在系统设置（系统设置 > 工作区 > 快捷键 > Kwin）中配置好全局快捷键。
+
+<Table
+  headsStringMatrix={[["动作", "快捷键"]]}
+  bodyStringMatrix={[
+    ["窗口到桌面 1", "ctrl + alt + shift + 1"],
+    ["窗口到桌面 2", "ctrl + alt + shift + 2"],
+    ["窗口到桌面 3", "ctrl + alt + shift + 3"],
+    ["切换到桌面 1", "ctrl + F1"],
+    ["切换到桌面 2", "ctrl + F2"],
+    ["切换到桌面 3", "ctrl + F3"],
+  ]}
+/>
+
+回到 xdotool。搜索窗口，可以使用 `xdotool search` 命令。该命令可以通过名称、标题、正则等方式搜索目标窗口，如：`xdotool search --onlyvisible --sync --name chrome` 搜索名称带 chrome 的可见窗口。使用 sync 选项会阻塞程序直到搜索到结果为止，当你启动某个软件，并且想等到它的窗口可见，这个选项非常有用。命令会输出以换行符分割的 X 窗口标识符（window id）列表。激活窗口，可以使用 `xdotool windowactivate` 命令接上窗口标识符即可。最后，按键模拟：`xdotool key` 加按键，如：`xdotool key ctrl+alt+shift+1`
+
+
+熟悉上述命令后，就可以实现基本的工具函数：
+```bash
+#!/bin/bash
+ # 通过窗口名称获取窗口 ID
+ # $1 - window name
+ # return WID
+ function getWindowIDByName() {
+     local wid=`xdotool search --sync --onlyvisible --name $1`
+     echo $wid
+ }
+ 
+ # 把窗口移动到指定桌面
+ # $1 - window name
+ # $2 - desktop number [1, 2, 3]
+ function moveWindowToAnotherDesktop() {
+     local wid=`getWindowIDByName $1`
+     local shortcut="ctrl+alt+shift+$2"
+     # echo "moving $1 to Desktop $2 ..."
+     xdotool windowactivate --sync $wid key $shortcut
+ }
+ 
+ # 切换到指定桌面
+ # $1 - desktop number [1, 2, 3]
+ function gotoDesktop() {
+     xdotool behave blur
+     local shortcut="ctrl+F$1"
+     xdotool key $shortcut
+ }
+```
+主要流程中启动部分：
+```bash
+function autoStart() {
+    # 在这里启动你喜欢的软件
+    #...
+}
+```
+调用工具函数实现移动：
+```bash
+function autoMove() {
+    # 如果软件较多，可将窗口名称和目标桌面存到 map
+    # 然后遍历移动
+    moveWindowToAnotherDesktop chrome 1
+    moveWindowToAnotherDesktop webstorm 2
+    moveWindowToAnotherDesktop hyper 3
+    gotoDesktop 2
+}
+```
+程序忙完后，可以让它打个招呼：
+```bash
+ # $1 - message
+ function toast() {
+     notify-send $1 -a 'auto-starter'
+ }
+```
+**整个流程如下：**
+```bash
+ # ------ MAIN START ------
+ function main() {
+     autoStart
+     autoMove
+ 
+     toast "DESKTOP IS READY!"
+ }
+ 
+ main;
+ # ------ MAIN END -------
+```
+最后，如果因搜索窗口失败可能会发生移动异常，有必要可以记录异常日志。另外，是否可以使用 xdotool  实现 autoLayout 对具体桌面进行窗口布局呢？`xdotool windowsize` 和 `xdotool windowmove` 的用法不再具体展开，结合命令手册很容易上手。Have fun.
+
+
