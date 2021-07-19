@@ -24,5 +24,4 @@ jobs:
         script: |
           cd ${{ secrets.REPO_PATH }}
           git pull
-          yarn
           yarn build
