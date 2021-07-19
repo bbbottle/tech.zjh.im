@@ -1,0 +1,48 @@
+---
+title: nginx 笔记
+date: 2021/07/16
+author: zjh
+description: 从零学习 nginx 过程中的一些笔记。
+tag: Nginx
+type: post
+---
+import SupRef from 'components/SupRef';
+import FooterNote from 'components/FooterNote';
+import FooterNotes from 'components/FooterNotes';
+
+本文所有信息均来自<SupRef order={1} name="nginx_doc">官方文档</SupRef>，阅读过程中摘录了自认为是要点的信息。
+
+### 基本信息
+- Nginx 有一个主进程和一些工作进程。
+  - 主进程的目的是读取并解析配置同时维护工作进程。
+  - 工作进程做实际的请求处理。
+- Nginx 采用基于事件的模型与 OS 依赖机制来高效地在工作进程间分发请求
+- Nginx 与其模块的工作方式通过配置文件确定
+- 默认情况下，配置的名字是 nginx.conf 位于目录 /usr/local/nginx/conf, /etc/nginx, 或者 /usr/local/etc/nginx 下
+
+### 启停与配置重载
+直接运行可执行文件来启动 nginx, 一经启动，便能通过 `nginx -s signal` 来控制。signal 取值：
+- stop - 快速关闭
+- quit - 优雅停服
+- reload - 重新载入配置文件
+- reopen - 重新打开日志文件
+
+其中 `nginx -s quit` 优雅之处在于它会等待所有工作进程处理完手头上的请求再停止 nginx 进程。另一种优雅停服的方式可以借助工具 `kill` 完成。假设 Nginx 主进程 ID 为 1628, 那么我们也能使用 `kill -s QUIT 1628` 实现 `nginx -s quite` 一样的效果。
+
+命令 `ps -ax | grep nginx` 可列出所有正在运行的 nginx 进程。
+
+### 配置文件结构
+nginx 由各种**模块**构成。这些模块由配置文件中的各**指令**控制。
+
+#### 指令
+- 简单指令，一条简单指令由名称和空格分割的参数构成，并且以分号结束。
+- 块级指令，块级指令和简单指令有着相同的结构，只是它不以分号结尾，而是由花括号和包裹其间的附加指令集结束
+
+#### 上下文
+- 如果一个块级指令能够在花括号中包含其他指令，那么它就被称为一个**上下文**（例如: events, http, server 和 location）
+- 如果一个配置文件中的指令不在任何一个上下文中，则被视为处于 main 上下文中
+
+
+<FooterNotes>
+1. <FooterNote href="http://nginx.org/en/docs/" name="nginx_doc">Nginx 官方文档</FooterNote>
+</FooterNotes>
