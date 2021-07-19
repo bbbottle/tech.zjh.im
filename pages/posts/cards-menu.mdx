@@ -6,23 +6,32 @@ description: zjh.im 主要交互行为实现。
 type: post
 ---
 
+import Table from 'components/Table';
+
 # 卡片菜单
 
 zjh.im 的页面切换交互由[页面菜单](https://github.com/bbbottle/page-menu)组件负责。灵感来自于 2015 年在一个交互设计博客看到的 GIF（见下图），动图演示了 [Gal Shir](https://galshir.com/about) 提出的「卡片菜单」概念。卡片菜单跟现实生活中的食物模型菜单有微妙的相似之处。都近乎所见即所得，降低了受众在菜单上的中间概念和对应实物之间建立联系的成本。当时被这个想法吸引，用原生 JS 实现过，后来接触 React，也用 React 实现过。由于 Web 端大部分情况下，屏幕朝向为水平方向，因此，实现时把菜单项退出行为改为了底部退出。本文记录 react 版本实现思路。内容主要分为状态管理部分和渲染部分。
 ![tumblr_nywebilgeJ1stn28do1_1280.gif](/images/cards-menu.gif)
 ## 状态管理
+### 示意图
 下图展示的是菜单「关闭」、「开启」、「选中」三个关键状态。
 
-
 ![example (3).png](/images/menu-status.png)
-菜单状态并不复杂，状态转移表：
 
-| 当前状态 / 用户输入 | 点击图标 | 选中第 i 页 |
-| --- | --- | --- |
-| 关闭 | 开启 / 展开页面 & 隐藏图标 |  |
-| 开启 |  | 选中 i / 展示选中页 & 展示图标 |
-| 选中 i | 开启 / 恢复页面 & 隐藏图标 |  |
+### 状态转移表
 
+<Table
+   headsStringMatrix={[
+      ["当前状态 / 用户输入", "点击图标", "选中第 i 页"],
+   ]}
+   bodyStringMatrix={[
+     ["关闭", "开启 / 展开页面 & 隐藏图标", ""],
+     ["开启", "", "选中 i / 展示选中页 & 展示图标"],
+     ["选中 i", "开启 / 恢复页面 & 隐藏图标", ""]
+   ]}
+/>
+
+### 说明
 其中 i 为正整数。行列相交单元格中的内容表示下一个状态及其对应输出。页数是有限的，可以使用[有限状态机](https://en.wikipedia.org/wiki/Finite-state_machine#Concepts_and_terminology)模型来描述整个交互。该状态机
 
 1. 初始态为：关闭状态
