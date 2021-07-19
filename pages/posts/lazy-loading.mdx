@@ -1,0 +1,112 @@
+---
+title: 博文详情懒加载
+date: 2021/02/19
+author: zjh
+description: 博客的文章页，最初使用一个接口拉取全量文章列表及其详情。随着文章数量的增加，接口超时越来越频繁。
+tag: Intersection Observer
+type: post
+---
+
+# 博文详情懒加载
+博客的文章页，最初使用一个接口拉取全量文章列表及其详情。随着文章数量的增加，接口超时越来越频繁。要解决超时问题，接口需要拆分，相应的前端展示流程也需要调整（成任何正常博客都会采用的做法）：
+
+1. 获取文章列表，展示标题、日期以及内容摘要
+2. 获取文章内容详情
+
+前端调整过程想尽可能少做改动。因此不再改动文章列表页样式、并新增详情页。预期效果：
+
+1. 获取完列表数据后，用摘要内容先占据之前正文内容的位置（复用样式）
+2. 滚动时，当文章进入浏览器视口自动加载详情并替换 1. 中的摘要
+   1. 加载详情时，需要让用户有等待的心里预期，防止用户阅读过程中摘要突然被替换
+   2. 摘要和正文样式应保持一致，防止替换内容时过于明显地抖动
+
+
+
+下文记录借助 Intersection Observer 实现文章详情懒加载的思路。Intersection Observer 提供了一种手段来异步观察目标相对于其祖先元素或顶级文档视口位置以及可见性。直观的使用示例： `(new IntersectionObserver(handleIntersect, options)).observe(target)` 。
+
+- 通过 new 一个 IntersectionObserver 实例创建观察者
+- 并传入回调 `handleIntersect` 处理变更
+- 调用实例的 observe 方法观察目标
+
+
+
+其中回调函数的参数、options 支持的属性，部分说明如下：
+
+- changes - [IntersectionObserverEntry](https://w3c.github.io/IntersectionObserver/#intersectionobserverentry)
+```javascript
+const handleIntersect = changes => {
+  for (const change of changes) {
+    console.log(change.isIntersecting);     // 是否相交
+    console.log(change.target);             // 观察目标
+    // ...其他
+  }
+}
+```
+
+- options - [IntersectionObserverInit](https://w3c.github.io/IntersectionObserver/#intersection-observer-init)
+```javascript
+const options = {
+  root,        // 设定观察目标元素与哪个节点相交，默认为 null，使用 document 节点
+  rootMargin,  // 上述节点的外边距，默认为 '0px'
+  threshold    // 设定相交区域面积百分比，取值区间：[0, 1]，默认为 0
+               // 大于等于该值，则触发回调
+}  
+
+```
+回到文首提到的具体应用场景：涉及的主要组件有文章列表组件（设为 \<ArticleEntries /> ）及其子组件，负责单篇文章展示（设为
+\<Article />）。布局如下：
+![example-1.png](/images/articles-layout.png)
+Article 是观察目标，当 Article 完全进入 viewport 后，开始加载详情。先实现创建文章观察者的工具函数：
+```javascript
+const createArticleIntersectionObserver = (callbackFn) => {
+  const handleIntersectionChange = (entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting || !entry.target) {
+        return;
+      }
+
+      const articleId = entry.target.dataset.id;
+      callbackFn(articleId);
+    })
+  };
+
+  const options = { threshold: 1 };
+
+  return new IntersectionObserver(
+    handleIntersectionChange,
+    options
+  );
+}
+```
+上述方法中，有几点需要说明的地方：
+
+1. options 
+   1. root 未设置，直接使用 document 元素作为 rootElement
+   2. threshold 设为 1，表示等 Article 完全进入 viewport 再触发回调
+2. 从 target 的 dataset 取 id 提供给回调，前提条件：在渲染 Article 时，把 id 写入 dom 的 data-id 属性
+
+
+
+有了上述工具函数，事情已完成一半。剩余的事情比较好处理，不赘述代码：
+
+1. ArticleEntries 组件
+   1.  维护一个状态变量 articleDetailVisibilityDict 用来保存各篇文章的详情可见性，变量以文章 id 为 key，以详情是否可见为 value
+   2. 在组件加载完成的生命周期函数中，创建观察者，传入回调更新 a. 中 articleDetailVisibilityDict 指定 key 的值
+   3. 遍历列表数据渲染 Article 时，从 articleDetailVisibilityDict 中获取对应文章详情可见性传给 Article 组件，同时把 b. 中的观察者实例传给 Article 组件
+   4. 组件卸载前，调用观察者实例的 disconnect 方法，停止观察行为
+2. Article 组件
+   1. 渲染内容时，把文章 id 写入观察对象 dom 的 data-id 属性并通过 ref 保存 dom
+   2. 组件拿到 observer 实例后，调用 observe 方法观察 2.a 中 dom
+   3. 根据父组件下传的详情可见性标识变化情况，确定是否拉取详情信息
+
+
+
+布局示例图中，有两篇文章在初始状态时就已经处于 viewport 中，能感知到吗？当观察目标与指定的元素（或 viewport）相交，或者观察者首次开始观察目标时，回调均会被执行。因此在 Article 组件开始观察时，就能感知到当前是否已经处于 viewport 中。
+
+
+**不足：**
+上文实现的交互，使得用户在滚动过程中无法很好地跳过不感兴趣的内容继续安心浏览。因为即便快速滚动跳过，后续阅读过程中，跳过的内容也会突然加载完详情，导致当前阅读内容被向下挤压，用户失去阅读焦点。
+
+
+**改进：**
+在感知内容进入视区的基础上，使用定时器延时执行回调。
