@@ -6,12 +6,8 @@ description: 从零学习 nginx 过程中的一些笔记。
 tag: Nginx
 type: post
 ---
-import SupRef from 'components/SupRef';
-import FooterNote from 'components/FooterNote';
-import FooterNotes from 'components/FooterNotes';
 
 # Nginx 笔记
-本文所有信息均来自<SupRef order={1} name="nginx_doc">官方文档</SupRef>，阅读过程中摘录了自认为是要点的信息。
 
 ### 基本信息
 - Nginx 有一个主进程和一些工作进程。
@@ -42,8 +38,3 @@ nginx 由各种**模块**构成。这些模块由配置文件中的各**指令**
 #### 上下文
 - 如果一个块级指令能够在花括号中包含其他指令，那么它就被称为一个**上下文**（例如: events, http, server 和 location）
 - 如果一个配置文件中的指令不在任何一个上下文中，则被视为处于 main 上下文中
-
-
-<FooterNotes>
-1. <FooterNote href="http://nginx.org/en/docs/" name="nginx_doc">Nginx 官方文档</FooterNote>
-</FooterNotes>
