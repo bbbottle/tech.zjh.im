@@ -20,4 +20,4 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
-        script: cd ${{ secrets.REPO_PATH }} && git pull && yarn install && yarn build && echo ${{ secrets.PASSWORD }} | sudo -S systemctl restart tech.zjh.im.service
+        script: cd ${{ secrets.REPO_PATH }} && git pull && yarn install && yarn build
