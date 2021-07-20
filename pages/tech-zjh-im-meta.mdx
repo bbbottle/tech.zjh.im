@@ -4,6 +4,7 @@ date: 2021/07/13
 author: zjh
 type: page
 ---
+import Image from "next/image";
 
 # Meta Info
 
@@ -56,3 +57,10 @@ tech.zjh.im 是用 [nextra](https://nextra.vercel.app/) 生成的静态网站，
 - pages
 
 其余参考 [Commit Message Conventions](https://gist.github.com/stephenparish/9941e89d80e2bc58a153#format-of-the-commit-message)
+
+### 分支说明
+- `master` 发布分支，合并、提交到 master 分支的内容将触发自动部署流程，并把更新同步到线上。
+- `drafts` 草稿分支，内容很可能无法做到一次性从粗略的想法到完成编辑并发布，该分支用来保存未完成的工作。应及时合并 master 分支最新内容进来保持新鲜。
+- `hotfix` 修复分支，用于细节内容调整、修复。
+
+<figure><Image src="/images/content-publish-flow.svg" width={931} height={1113} className="next-image" /><figcaption>Fig 1. 更新、发布流程</figcaption></figure>
