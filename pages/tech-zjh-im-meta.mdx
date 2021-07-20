@@ -10,11 +10,11 @@ import Details from "components/Details";
 # Meta Info
 
 ## 内容说明
-[zjh.im](https://zjh.im) 本身有博文的功能，只是它像是自己用所学技术做给自己的礼物。习惯于在上边发布生活随笔这类内容。尝试过在上边发布一些技术相关的文章，生活气息和技术总是发生奇怪地反应显得不伦不类，索性分开写。因此这里是与烟火关系不大的文字。
+[zjh.im](https://zjh.im) 具备博文发布功能，只是它像是自己用所学技术做给自己的礼物。更习惯于在上边发布生活随笔类的文字。尝试过在上边发布技术相关的文章，生活文字的随性矫情和技术文字的严肃冰冷总是发生奇怪地反应。显得不伦不类，索性分开写。因此与烟火关系不大且矫情指数较低的文字统一记录到这里。
 
 
 ## 持续部署
-tech.zjh.im 是用 [nextra](https://nextra.vercel.app/) 生成的静态网站，主要内容由 mdx 文件构成。为了专注、高效地更新站点内容，构建部署这种重复性的动作应该交给 CD 完成。利用现成的 [ssh-action](https://github.com/appleboy/ssh-action), 实现简单，远程连到 VPS 并执行相应的命令即可。
+tech.zjh.im 是用 [nextra](https://nextra.vercel.app/) 生成的静态网站，主要内容由 mdx 文件构成。为了专注、高效地更新站点内容，构建部署这种重复性的动作应该交给 CD 完成。利用现成的 [ssh-action](https://github.com/appleboy/ssh-action) 远程连到 VPS 并执行相应的命令即可。
 
 ### VPS 准备
 1. [新增 SSH 密钥到 GitHub 账户](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
