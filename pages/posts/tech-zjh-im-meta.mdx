@@ -2,14 +2,8 @@
 title: tech.zjh.im meta
 date: 2021/07/13
 author: zjh
-description: tech.zjh.im 元信息
-tag: tech.zjh.im
 type: post
 ---
-
-import SupRef from 'components/SupRef';
-import FooterNote from 'components/FooterNote';
-import FooterNotes from 'components/FooterNotes';
 
 # tech.zjh.im meta
 
@@ -18,10 +12,10 @@ zjh.im 本身有博文的功能，只是它像是自己用所学技术做给自�
 
 
 ## 持续部署
-tech.zjh.im 是用 <SupRef name="nextra" order={1}>nextra</SupRef> 生成的静态网站，主要内容由 mdx 文件构成。为了专注、高效地更新站点内容，构建部署这种重复性的动作应该交给 CD 完成。利用现成的 <SupRef order={2} name="ssh_action">ssh-action</SupRef>, 实现简单，远程连到 VPS 并执行相应的命令即可。
+tech.zjh.im 是用 [nextra](https://nextra.vercel.app/) 生成的静态网站，主要内容由 mdx 文件构成。为了专注、高效地更新站点内容，构建部署这种重复性的动作应该交给 CD 完成。利用现成的 [ssh-action](https://github.com/appleboy/ssh-action), 实现简单，远程连到 VPS 并执行相应的命令即可。
 
 ### VPS 准备：
-1. 新增 SSH 密钥到 <SupRef order={3} name="github_ssh">GitHub</SupRef> 账户
+1. [新增 SSH 密钥到 GitHub 账户](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
 2. 拉取 tech.zjh.im 仓库，并安装好依赖
 3. Nginx 已经配置好静态文件服务，tech.zjh.im 仓库内容更新后，只要重新构建更新 dist 目录，站点便更新
 
@@ -61,10 +55,3 @@ tech.zjh.im 是用 <SupRef name="nextra" order={1}>nextra</SupRef> 生成的静�
 - posts
 
 其余参考 [Commit Message Conventions](https://gist.github.com/stephenparish/9941e89d80e2bc58a153#format-of-the-commit-message)
-
-<FooterNotes>
-1. <FooterNote href="https://nextra.vercel.app/" name="nextra">nextra</FooterNote>
-2. <FooterNote href="https://github.com/appleboy/ssh-action" name="ssh_action">ssh-action</FooterNote>
-3. <FooterNote href="https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account" name="github_ssh">新增 SSH 密钥到 Github 账户</FooterNote>
-</FooterNotes>
-
