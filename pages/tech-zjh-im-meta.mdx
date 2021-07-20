@@ -5,6 +5,7 @@ author: zjh
 type: page
 ---
 import Image from "next/image";
+import Details from "components/Details";
 
 # Meta Info
 
@@ -12,7 +13,7 @@ import Image from "next/image";
 [zjh.im](https://zjh.im) 本身有博文的功能，只是它像是自己用所学技术做给自己的礼物。习惯于在上边发布生活随笔这类内容。尝试过在上边发布一些技术相关的文章，生活气息和技术总是发生奇怪地反应显得不伦不类，索性分开写。因此这里是与烟火关系不大的文字。
 
 
-## 持续部署配置
+## 持续部署
 tech.zjh.im 是用 [nextra](https://nextra.vercel.app/) 生成的静态网站，主要内容由 mdx 文件构成。为了专注、高效地更新站点内容，构建部署这种重复性的动作应该交给 CD 完成。利用现成的 [ssh-action](https://github.com/appleboy/ssh-action), 实现简单，远程连到 VPS 并执行相应的命令即可。
 
 ### VPS 准备
@@ -27,7 +28,7 @@ tech.zjh.im 是用 [nextra](https://nextra.vercel.app/) 生成的静态网站，
 ### 仓库配置
 #### 添加以下 secrets:
 1. SSHKEY, 上个步骤复制的内容
-2. HOST, 填 VPS ip 地址 
+2. HOST, 填 VPS ip 地址
 3. USERNAME, 使用 ssh 登陆的用户名
 4. PORT, 端口，默认填 22
 
@@ -63,4 +64,6 @@ tech.zjh.im 是用 [nextra](https://nextra.vercel.app/) 生成的静态网站，
 - `drafts` 草稿分支，内容很可能无法做到一次性从粗略的想法到完成编辑并发布，该分支用来保存未完成的工作。应及时合并 master 分支最新内容进来保持新鲜。
 - `hotfix` 修复分支，用于细节内容调整、修复。
 
-<figure><Image src="/images/content-publish-flow.svg" width={931} height={1113} className="next-image" /><figcaption>Fig 1. 更新、发布流程</figcaption></figure>
+<Details name="Fig. 更新、发布流程">
+  <Image src="/images/content-publish-flow.svg" width={931} height={1113} className="next-image" />
+</Details>

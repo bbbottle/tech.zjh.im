@@ -3,6 +3,7 @@ type: page
 title: About
 date: 2020-01-01
 ---
+import Details from "components/Details";
 
 # Tech Notes
 
@@ -17,13 +18,7 @@ Github: [bbbottle](https://github.com/bbbottle)
 HomePage: [zjh.im](https://zjh.im)
 </pre>
 
-<details><summary children="Resume"/>
-<style jsx>{`
-  summary:not(:focus-visible):focus {
-    outline: none;
-  }
-`}</style>
-
+<Details name="Resume">
 ### Education/Work Experience
 - Web development at [ONES](https://ones.ai), 2018-2021
 - Web development at [Oshadan](https://www.oshadan.com), 2015-2018
@@ -36,5 +31,4 @@ HomePage: [zjh.im](https://zjh.im)
 ### Contact
 - Email: [hi@zjh.im](mailto:hi@zjh.im)
 - Phone: +86182****2240
-</details>
-
+</Details>

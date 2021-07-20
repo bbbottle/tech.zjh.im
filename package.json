@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "next build && next export"
+    "build": "next build"
   },
   "dependencies": {
     "next": "^11.0.1",
