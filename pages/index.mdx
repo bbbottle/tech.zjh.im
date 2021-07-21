@@ -1,18 +1,19 @@
 ---
+title: Meta
+date: 2021/07/13
+author: zjh
 type: page
-title: About
-date: 2020-01-01
 ---
+import Image from "next/image";
 import Details from "components/Details";
 
-# Tech Notes
+# Meta Info
 
+## 关于作者
 zjh (b. 1993 China, based in ShenZhen, will move to ChangSha soon) is a web front end developer obsessed with React and has an interesting in back end techs too.
 
 He enjoys coding and believes in being is more important than doing.
 
-
----
 <pre>
 Github: [bbbottle](https://github.com/bbbottle)
 HomePage: [zjh.im](https://zjh.im)
@@ -31,4 +32,65 @@ HomePage: [zjh.im](https://zjh.im)
 ### Contact
 - Email: [hi@zjh.im](mailto:hi@zjh.im)
 - Phone: +86182****2240
+</Details>
+
+## 内容说明
+[zjh.im](https://zjh.im) 具备博文发布功能，只是它像是自己用所学技术做给自己的礼物。更习惯于在上边发布生活随笔类的文字。尝试过在上边发布技术相关的文章，生活文字的随性矫情和技术文字的严肃冰冷总是发生奇怪地反应。显得不伦不类，索性分开写。因此与烟火关系不大且矫情指数较低的文字统一记录到这里。
+
+
+## 持续部署
+tech.zjh.im 是用 [nextra](https://nextra.vercel.app/) 生成的静态网站，主要内容由 mdx 文件构成。为了专注、高效地更新站点内容，构建部署这种重复性的动作应该交给 CD 完成。利用现成的 [ssh-action](https://github.com/appleboy/ssh-action) 远程连到 VPS 并执行相应的命令即可。
+
+<Details name="具体配置">
+### VPS 准备
+1. [新增 SSH 密钥到 GitHub 账户](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+2. 拉取 tech.zjh.im 仓库，并安装好依赖
+3. Nginx 已经配置好静态文件服务，tech.zjh.im 仓库内容更新后，只要重新构建更新 dist 目录，站点便更新
+
+### VPS 配置步骤
+1. `cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys`
+2. 复制命令 `cat ~/.ssh/id_ed25519` 的输出
+
+### 仓库配置
+#### 添加以下 secrets:
+1. SSHKEY, 上个步骤复制的内容
+2. HOST, 填 VPS ip 地址
+3. USERNAME, 使用 ssh 登陆的用户名
+4. PORT, 端口，默认填 22
+
+#### deploy.yml
+- [deploy.yml](https://github.com/bbbottle/tech.zjh.im/blob/master/.github/workflows/deploy.yml)
+- 其中 script 可能根据实际情况调整
+</Details>
+
+## 版本控制
+### 提交消息格式
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+**允许的 \<type\>**
+- feat (添加新文章、组件等)
+- fix (文章文字、语句修复、组件功能修复等)
+- style (文章格式、排版等)
+- chore (构建等其他维护)
+
+**允许的 \<scope\>**
+- components
+- posts
+- pages
+
+其余参考 [Commit Message Conventions](https://gist.github.com/stephenparish/9941e89d80e2bc58a153#format-of-the-commit-message)
+
+### 分支说明
+- `master` 发布分支，合并、提交到 master 分支的内容将触发自动部署流程，并把更新同步到线上。
+- `drafts` 草稿分支，内容很可能无法做到一次性从粗略的想法到完成编辑并发布，该分支用来保存未完成的工作。应及时合并 master 分支最新内容进来保持新鲜。
+- `hotfix` 修复分支，用于细节内容调整、修复。
+
+<Details name="Fig. 更新、发布流程">
+  <Image src="/images/content-publish-flow.svg" width={931} height={1113} className="next-image" />
 </Details>
